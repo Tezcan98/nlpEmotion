@@ -2,5 +2,4 @@ django
 gunicorn
 django-heroku
 googletrans==3.1.0a0
-sklearn
-pickle
+sklearn 
