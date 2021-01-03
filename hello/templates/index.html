@@ -26,8 +26,7 @@
                 <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                 <div class="chat_ib">
                   <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
+                  <p>Konuşamam sadece EmotionsApp 😃</p>
                 </div>
               </div>
             </div>
@@ -37,36 +36,27 @@
         </div>
         <div class="mesgs">
           <div class="msg_history">
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>Test which is a new approach to have all
-                    solutions</p>
-                  <span class="time_date"> 11:01 AM    |    June 9</span></div>
-              </div>
-            </div>
+            
             <div class="outgoing_msg">
               <div class="sent_msg">
-                <p>Test which is a new approach to have all
-                  solutions</p>
-                <span class="time_date"> 11:01 AM    |    June 9</span> </div>
+                <p>SELAM</p>
+                <span class="time_date"> 2 minute ago</span> </div>
             </div>
             <div class="incoming_msg">
               <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
               <div class="received_msg">
                 <div class="received_withd_msg">
-                  <p>Test, which is a new approach to have</p>
-                  <span class="time_date"> 11:01 AM    |    Yesterday</span></div>
+                  <p>Merhaba 😃 </p>
+                  <span class="time_date"> 1 minute ago</span></div>
               </div>
             </div>
            
            
           </div>
-          <div class="type_msg">
+          <div class="type_msg" id= "mesaj_alani">
             <div class="input_msg_write">
               <input type="text" class="write_msg" placeholder="Type a message" />
-              <button class="msg_send_btn" type="button" onclick="bas()" ><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+              <button class="msg_send_btn" id="message_send" type="button" onclick="bas()" ><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
             </div>
           </div>
         </div>
@@ -78,25 +68,56 @@
 
     <script>
 
-      function createMessage(msg,time){
+      function createMessage(msg,time,emoji){ 
           return  "<div class='outgoing_msg'> \
               <div class='sent_msg'> \
-                <p>"+ msg +"</p> \
+                <p>"+ msg +" "+emoji+"</p> \
                 <span class='time_date'> "+time+"</span> </div>\
             </div>"
       }
 
+      function predict(message){ 
+        $.ajax({
+        type: "POST",
+        dataType: "json",
+        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        url: '/predict', 
+        data: {
+            'msg' : message,
+        },
+        success: function (response) { 
+           var newMessages = document.getElementsByClassName("write_msg")[0]
+            var messages = document.getElementsByClassName("msg_history")[0]
+            var current = new Date(); 
+            messages.innerHTML += createMessage(message,current.toLocaleTimeString(),response.emoji);
+            messages.scrollTop = messages.scrollHeight;
+            newMessages.value = ""; 
+        }
+        }); 
+
+      }
+
       function bas(){
+
+
         var newMessages = document.getElementsByClassName("write_msg")[0]
         if (newMessages.value.length > 0){
-          var messages = document.getElementsByClassName("msg_history")[0]
-          var current = new Date(); 
-          messages.innerHTML += createMessage(newMessages.value,current.toLocaleTimeString());
-          messages.scrollTop = messages.scrollHeight;
-          newMessages.value = "";
+          
+          predict(newMessages.value)
+          newMessages.value = "waiting server..."; 
         }
       }
 
+  alan = document.getElementById("mesaj_alani")
+  alan.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("message_send").click();
+  }
+  });
     </script>
  
 	
